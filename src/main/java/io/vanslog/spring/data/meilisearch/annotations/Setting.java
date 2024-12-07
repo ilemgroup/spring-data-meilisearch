@@ -15,12 +15,9 @@
  */
 package io.vanslog.spring.data.meilisearch.annotations;
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Inherited;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
 import org.springframework.data.annotation.Persistent;
+
+import java.lang.annotation.*;
 
 /**
  * Meilisearch Setting
@@ -40,6 +37,13 @@ public @interface Setting {
 	 * @see <a href="https://www.meilisearch.com/docs/reference/api/settings#sortable-attributes">Sortable attributes</a>
 	 */
 	String[] sortAttributes() default {};
+
+	/**
+	 * attributes to be used for filtering
+	 *
+	 * @see <a href="https://www.meilisearch.com/docs/reference/api/settings#filterable-attributes">Filterable attributes</a>
+	 */
+	String[] filterableAttributes() default {};
 
 	/**
 	 * attribute to be used for distinct

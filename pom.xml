@@ -7,7 +7,7 @@
 
     <groupId>io.vanslog</groupId>
     <artifactId>spring-data-meilisearch</artifactId>
-    <version>0.6.1-SNAPSHOT</version>
+    <version>0.6.2</version>
 
     <parent>
         <groupId>org.springframework.data.build</groupId>
@@ -25,8 +25,8 @@
     </organization>
 
     <properties>
-        <springdata.commons>3.2.0-SNAPSHOT</springdata.commons>
-        <meilisearch-java>0.12.0</meilisearch-java>
+        <springdata.commons>3.3.6</springdata.commons>
+        <meilisearch-java>0.14.2</meilisearch-java>
         <testcontainers-meilisearch>1.0.5</testcontainers-meilisearch>
 
         <java-module-name>spring.data.meilisearch</java-module-name>
@@ -227,6 +227,32 @@
                     </plugins>
                 </pluginManagement>
             </build>
+        </profile>
+        <profile>
+            <id>weforum</id>
+            <distributionManagement>
+                <snapshotRepository>
+                    <id>nexus-esms-snapshots</id>
+                    <url>https://nexuseks.weforum.local/repository/maven-esms-snapshots/</url>
+                </snapshotRepository>
+                <repository>
+                    <id>nexus-esms-releases</id>
+                    <url>https://nexuseks.weforum.local/repository/maven-esms-releases/</url>
+                </repository>
+            </distributionManagement>
+        </profile>
+        <profile>
+            <id>ilem</id>
+            <distributionManagement>
+                <snapshotRepository>
+                    <id>nexus-ilem-snapshots</id>
+                    <url>https://nexus.ilem.dev/repository/maven-ilem-snapshots</url>
+                </snapshotRepository>
+                <repository>
+                    <id>nexus-ilem-releases</id>
+                    <url>https://nexus.ilem.dev/repository/maven-ilem-releases</url>
+                </repository>
+            </distributionManagement>
         </profile>
     </profiles>
 

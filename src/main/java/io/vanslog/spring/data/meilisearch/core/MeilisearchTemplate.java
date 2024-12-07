@@ -15,8 +15,11 @@
  */
 package io.vanslog.spring.data.meilisearch.core;
 
-import com.meilisearch.sdk.model.DocumentsQuery;
-import com.meilisearch.sdk.model.Settings;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.meilisearch.sdk.SearchRequest;
+import com.meilisearch.sdk.exceptions.MeilisearchApiException;
+import com.meilisearch.sdk.exceptions.MeilisearchException;
+import com.meilisearch.sdk.model.*;
 import io.vanslog.spring.data.meilisearch.DocumentAccessException;
 import io.vanslog.spring.data.meilisearch.TaskStatusException;
 import io.vanslog.spring.data.meilisearch.UncategorizedMeilisearchException;
@@ -27,24 +30,12 @@ import io.vanslog.spring.data.meilisearch.core.convert.MeilisearchConverter;
 import io.vanslog.spring.data.meilisearch.core.mapping.MeilisearchPersistentEntity;
 import io.vanslog.spring.data.meilisearch.core.mapping.MeilisearchPersistentProperty;
 import io.vanslog.spring.data.meilisearch.core.mapping.SimpleMeilisearchMappingContext;
-
-import java.lang.reflect.Method;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Objects;
-
 import org.springframework.data.mapping.PersistentProperty;
 import org.springframework.lang.Nullable;
 import org.springframework.util.Assert;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.meilisearch.sdk.SearchRequest;
-import com.meilisearch.sdk.exceptions.MeilisearchApiException;
-import com.meilisearch.sdk.exceptions.MeilisearchException;
-import com.meilisearch.sdk.model.TaskInfo;
-import com.meilisearch.sdk.model.TaskStatus;
+import java.lang.reflect.Method;
+import java.util.*;
 
 /**
  * Implementation of {@link io.vanslog.spring.data.meilisearch.core.MeilisearchOperations}.
@@ -196,6 +187,15 @@ public class MeilisearchTemplate implements MeilisearchOperations {
 				.map(hit -> (T) objectMapper.convertValue(hit, clazz)) //
 				.toList();
 	}
+
+    @SuppressWarnings("unchecked")
+    @Override
+    public int count(SearchRequest searchRequest, Class<?> clazz) {
+        String indexUid = getIndexUidFor(clazz);
+        SearchResult searchable = (SearchResult) execute(client -> client.index(indexUid).search(searchRequest));
+
+        return searchable.getEstimatedTotalHits();
+    }
 
 	public <T> void applySettings(Class<T> clazz) {
 		String indexUid = getIndexUidFor(clazz);

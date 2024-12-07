@@ -15,13 +15,11 @@
  */
 package io.vanslog.spring.data.meilisearch.core;
 
+import com.meilisearch.sdk.SearchRequest;
 import io.vanslog.spring.data.meilisearch.core.convert.MeilisearchConverter;
-
-import java.util.List;
-
 import org.springframework.lang.Nullable;
 
-import com.meilisearch.sdk.SearchRequest;
+import java.util.List;
 
 /**
  * The operations for <a href="https://www.meilisearch.com/docs/reference/api/overview">Meilisearch APIs</a>.
@@ -184,6 +182,9 @@ public interface MeilisearchOperations {
 	 * @param <T> the type of the entity
 	 */
 	<T> List<T> search(SearchRequest searchRequest, Class<?> clazz);
+
+    @SuppressWarnings("unchecked")
+    int count(SearchRequest searchRequest, Class<?> clazz);
 
 	/**
 	 * Apply the default settings for the given entity class.

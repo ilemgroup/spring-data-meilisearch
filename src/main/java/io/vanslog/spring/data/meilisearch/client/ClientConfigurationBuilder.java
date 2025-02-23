@@ -1,5 +1,5 @@
 /*
- * Copyright 2023-2024 the original author or authors.
+ * Copyright 2023-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,15 +25,15 @@ import org.springframework.util.Assert;
  */
 public class ClientConfigurationBuilder {
 
+	private static final String[] DEFAULT_CLIENT_AGENT = new String[0];
+	private static final int DEFAULT_REQUEST_TIMEOUT = 5000;
+	private static final int DEFAULT_REQUEST_INTERVAL = 50;
+
 	@Nullable private String hostUrl;
 	@Nullable private String apiKey;
 	private String[] clientAgents;
 	private int requestTimeout;
 	private int requestInterval;
-
-	private static final String[] DEFAULT_CLIENT_AGENT = new String[0];
-	private static final int DEFAULT_REQUEST_TIMEOUT = 5000;
-	private static final int DEFAULT_REQUEST_INTERVAL = 50;
 
 	/**
 	 * Create a new {@link ClientConfigurationBuilder}.

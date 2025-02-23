@@ -1,5 +1,5 @@
 /*
- * Copyright 2023-2024 the original author or authors.
+ * Copyright 2023-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,24 +15,25 @@
  */
 package io.vanslog.spring.data.meilisearch.core;
 
-import static org.assertj.core.api.Assertions.*;
-
 import com.meilisearch.sdk.SearchRequest;
+import com.meilisearch.sdk.exceptions.MeilisearchException;
 import io.vanslog.spring.data.meilisearch.annotations.Document;
 import io.vanslog.spring.data.meilisearch.client.MeilisearchClient;
+import io.vanslog.spring.data.meilisearch.core.query.BaseQuery;
+import io.vanslog.spring.data.meilisearch.core.query.BasicQuery;
+import io.vanslog.spring.data.meilisearch.core.query.IndexQuery;
 import io.vanslog.spring.data.meilisearch.entities.Movie;
 import io.vanslog.spring.data.meilisearch.junit.jupiter.MeilisearchTest;
 import io.vanslog.spring.data.meilisearch.junit.jupiter.MeilisearchTestConfiguration;
-
-import java.util.List;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.annotation.Id;
 import org.springframework.test.context.ContextConfiguration;
 
-import com.meilisearch.sdk.exceptions.MeilisearchException;
+import java.util.List;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * Integration tests for {@link MeilisearchTemplate}.
@@ -201,6 +202,26 @@ class MeilisearchTemplateIntegrationTests {
 
 		assertThat(result).containsExactlyInAnyOrder(movie2);
 	}
+
+    @Test
+    void shouldSearchWithQuery() {
+        meilisearchTemplate.save(List.of(movie1, movie2, movie3));
+
+        BaseQuery query = new BasicQuery(movie2.getTitle());
+        SearchHits<Movie> result = meilisearchTemplate.search(query, Movie.class);
+
+        assertThat(result.getSearchHits()).isEqualTo(List.of(movie2));
+    }
+
+    @Test
+    void shouldMultiSearchWithQuery() {
+        meilisearchTemplate.save(List.of(movie1, movie2, movie3));
+
+        List<IndexQuery> queries = List.of(new IndexQuery(movie1.getTitle()), new IndexQuery(movie2.getTitle()));
+        SearchHits<Movie> result = meilisearchTemplate.multiSearch(queries, Movie.class);
+
+        assertThat(result.getSearchHits()).isEqualTo(List.of(movie1, movie2));
+    }
 
 	@Test
 	void shouldSaveEntityWithAnnotatedIdField() {

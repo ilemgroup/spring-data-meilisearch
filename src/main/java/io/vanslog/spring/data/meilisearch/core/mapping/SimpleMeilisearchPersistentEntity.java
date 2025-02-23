@@ -1,5 +1,5 @@
 /*
- * Copyright 2023-2024 the original author or authors.
+ * Copyright 2023-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -43,9 +43,10 @@ public class SimpleMeilisearchPersistentEntity<T> extends BasicPersistentEntity<
 
 	private final StandardEvaluationContext context;
 	@Nullable private final Document document;
-	@Nullable private String indexUid;
 	private final Lazy<SettingsParameter> settingParameter;
-	private boolean applySettings;
+	private final boolean applySettings;
+	@Nullable
+	private String indexUid;
 
 	/**
 	 * Creates a new {@link SimpleMeilisearchPersistentEntity} with the given {@link TypeInformation}.
@@ -59,7 +60,7 @@ public class SimpleMeilisearchPersistentEntity<T> extends BasicPersistentEntity<
 		Class<T> rawType = information.getType();
 		document = AnnotatedElementUtils.findMergedAnnotation(rawType, Document.class);
 
-		this.settingParameter = Lazy.of(() -> buildSettingParameter(rawType));
+		this.settingParameter = Lazy.of(() -> buildSettingsParameter(rawType));
 
 		if (document != null) {
 			Assert.hasText(document.indexUid(),
@@ -93,7 +94,7 @@ public class SimpleMeilisearchPersistentEntity<T> extends BasicPersistentEntity<
 		return settingParameter.get().toSettings();
 	}
 
-	private SettingsParameter buildSettingParameter(Class<?> clazz) {
+	private SettingsParameter buildSettingsParameter(Class<?> clazz) {
 
 		SettingsParameter settingsParameter = new SettingsParameter();
 		Setting settingAnnotation = AnnotatedElementUtils.findMergedAnnotation(clazz, Setting.class);
@@ -148,6 +149,7 @@ public class SimpleMeilisearchPersistentEntity<T> extends BasicPersistentEntity<
 		private String[] displayedAttributes;
 		private String[] rankingRules;
 		@Nullable private String[] stopWords;
+		@Nullable
 		private Pagination pagination;
 
 		Settings toSettings() {
@@ -170,9 +172,11 @@ public class SimpleMeilisearchPersistentEntity<T> extends BasicPersistentEntity<
 				settings.setStopWords(stopWords);
 			}
 
-			var meiliPagination = new com.meilisearch.sdk.model.Pagination();
-			meiliPagination.setMaxTotalHits(this.pagination.maxTotalHits());
-			settings.setPagination(meiliPagination);
+			if (pagination != null) {
+				var meiliPagination = new com.meilisearch.sdk.model.Pagination();
+				meiliPagination.setMaxTotalHits(this.pagination.maxTotalHits());
+				settings.setPagination(meiliPagination);
+			}
 
 			return settings;
 		}

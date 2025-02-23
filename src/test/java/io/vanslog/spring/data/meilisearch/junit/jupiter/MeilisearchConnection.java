@@ -1,5 +1,5 @@
 /*
- * Copyright 2023-2024 the original author or authors.
+ * Copyright 2023-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,7 +16,6 @@
 package io.vanslog.spring.data.meilisearch.junit.jupiter;
 
 import io.vanslog.testcontainers.meilisearch.MeilisearchContainer;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.junit.jupiter.api.extension.ExtensionContext;
@@ -31,7 +30,7 @@ public class MeilisearchConnection implements ExtensionContext.Store.CloseableRe
 
 	private static final Log LOGGER = LogFactory.getLog(MeilisearchConnection.class);
 	private static final String TESTCONTAINERS_IMAGE_NAME = "getmeili/meilisearch";
-	private static final String TESTCONTAINERS_IMAGE_VERSION = "v1.2.0";
+    private static final String TESTCONTAINERS_IMAGE_VERSION = "v1.12.3";
 	private static final int MEILISEARCH_DEFAULT_PORT = 7700;
 	private static final String MEILISEARCH_DEFAULT_MASTER_KEY = "masterKey";
 	private static final ThreadLocal<MeilisearchConnectionInfo> meilisearchConnectionInfoThreadLocal = new ThreadLocal<>();

@@ -7,7 +7,7 @@
 
     <groupId>io.vanslog</groupId>
     <artifactId>spring-data-meilisearch</artifactId>
-    <version>0.6.2</version>
+    <version>0.6.2-SNAPSHOT</version>
 
     <parent>
         <groupId>org.springframework.data.build</groupId>

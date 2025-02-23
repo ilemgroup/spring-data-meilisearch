@@ -7,7 +7,7 @@
 
     <groupId>io.vanslog</groupId>
     <artifactId>spring-data-meilisearch</artifactId>
-    <version>0.6.2-SNAPSHOT</version>
+    <version>0.6.2-ilem</version>
 
     <parent>
         <groupId>org.springframework.data.build</groupId>
@@ -81,6 +81,20 @@
             <groupId>io.vanslog</groupId>
             <artifactId>testcontainers-meilisearch</artifactId>
             <version>${testcontainers-meilisearch}</version>
+            <scope>test</scope>
+            <exclusions>
+                <exclusion>
+                    <!-- Vulnerability update -->
+                    <groupId>org.apache.commons</groupId>
+                    <artifactId>commons-compress</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <!-- Vulnerability update -->
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-compress</artifactId>
+            <version>1.27.1</version>
             <scope>test</scope>
         </dependency>
 

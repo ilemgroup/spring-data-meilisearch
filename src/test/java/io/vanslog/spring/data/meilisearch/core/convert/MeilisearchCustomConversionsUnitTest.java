@@ -1,5 +1,5 @@
 /*
- * Copyright 2023-2024 the original author or authors.
+ * Copyright 2023-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -12,15 +12,10 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- */package io.vanslog.spring.data.meilisearch.core.convert;
-
-import static org.assertj.core.api.Assertions.*;
+ */
+package io.vanslog.spring.data.meilisearch.core.convert;
 
 import io.vanslog.spring.data.meilisearch.config.MeilisearchConfigurationSupport;
-
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,6 +24,11 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.data.convert.Jsr310Converters;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
+
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration
@@ -40,8 +40,8 @@ class MeilisearchCustomConversionsUnitTest {
 	void shouldRegisterAndUseCustomConverter() {
 		LocalDateTime toConvert = LocalDateTime.of(2009, 1, 3, 18, 15, 5);
 		LocalDate converted = meilisearchConverter.getConversionService().convert(toConvert, LocalDate.class);
-		
-		assertThat(converted).isEqualTo(LocalDate.of(2009, 1, 3));
+
+        assertThat(converted).isEqualTo(LocalDate.of(2009, 1, 3));
 	}
 
 	@Configuration

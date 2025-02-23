@@ -1,5 +1,5 @@
 /*
- * Copyright 2023-2024 the original author or authors.
+ * Copyright 2023-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,14 +15,20 @@
  */
 package io.vanslog.spring.data.meilisearch.repository.config;
 
+import io.vanslog.spring.data.meilisearch.annotations.Document;
+import io.vanslog.spring.data.meilisearch.repository.MeilisearchRepository;
 import io.vanslog.spring.data.meilisearch.repository.support.MeilisearchRepositoryFactoryBean;
-
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.core.annotation.AnnotationAttributes;
 import org.springframework.data.repository.config.AnnotationRepositoryConfigurationSource;
 import org.springframework.data.repository.config.RepositoryConfigurationExtensionSupport;
 import org.springframework.data.repository.config.XmlRepositoryConfigurationSource;
 import org.w3c.dom.Element;
+
+import java.lang.annotation.Annotation;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * {@link org.springframework.data.repository.config.RepositoryConfigurationExtension} implementation to configure
@@ -59,5 +65,15 @@ public class MeilisearchRepositoryConfigExtension extends RepositoryConfiguratio
 	public void postProcess(BeanDefinitionBuilder builder, XmlRepositoryConfigurationSource config) {
 		Element element = config.getElement();
 		builder.addPropertyReference("meilisearchOperations", element.getAttribute("meilisearch-template-ref"));
+	}
+
+	@Override
+	protected Collection<Class<? extends Annotation>> getIdentifyingAnnotations() {
+		return Collections.singleton(Document.class);
+	}
+
+	@Override
+	protected Collection<Class<?>> getIdentifyingTypes() {
+		return List.of(MeilisearchRepository.class);
 	}
 }

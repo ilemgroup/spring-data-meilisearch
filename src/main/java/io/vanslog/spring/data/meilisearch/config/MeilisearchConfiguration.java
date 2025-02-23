@@ -1,5 +1,5 @@
 /*
- * Copyright 2023-2024 the original author or authors.
+ * Copyright 2023-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,16 +15,14 @@
  */
 package io.vanslog.spring.data.meilisearch.config;
 
+import com.meilisearch.sdk.json.GsonJsonHandler;
+import com.meilisearch.sdk.json.JsonHandler;
 import io.vanslog.spring.data.meilisearch.client.ClientConfiguration;
 import io.vanslog.spring.data.meilisearch.client.MeilisearchClient;
 import io.vanslog.spring.data.meilisearch.core.MeilisearchOperations;
 import io.vanslog.spring.data.meilisearch.core.MeilisearchTemplate;
 import io.vanslog.spring.data.meilisearch.core.convert.MeilisearchConverter;
-
 import org.springframework.context.annotation.Bean;
-
-import com.meilisearch.sdk.json.GsonJsonHandler;
-import com.meilisearch.sdk.json.JsonHandler;
 
 /**
  * Base class for a @{@link org.springframework.context.annotation.Configuration} class to set up the Meilisearch

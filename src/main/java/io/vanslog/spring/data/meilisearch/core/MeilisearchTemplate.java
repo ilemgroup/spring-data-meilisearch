@@ -1,5 +1,5 @@
 /*
- * Copyright 2023-2024 the original author or authors.
+ * Copyright 2023-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,7 +15,7 @@
  */
 package io.vanslog.spring.data.meilisearch.core;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.meilisearch.sdk.MultiSearchRequest;
 import com.meilisearch.sdk.SearchRequest;
 import com.meilisearch.sdk.exceptions.MeilisearchApiException;
 import com.meilisearch.sdk.exceptions.MeilisearchException;
@@ -25,17 +25,24 @@ import io.vanslog.spring.data.meilisearch.TaskStatusException;
 import io.vanslog.spring.data.meilisearch.UncategorizedMeilisearchException;
 import io.vanslog.spring.data.meilisearch.annotations.Document;
 import io.vanslog.spring.data.meilisearch.client.MeilisearchClient;
+import io.vanslog.spring.data.meilisearch.client.msc.RequestConverter;
+import io.vanslog.spring.data.meilisearch.client.msc.ResponseConverter;
 import io.vanslog.spring.data.meilisearch.core.convert.MappingMeilisearchConverter;
 import io.vanslog.spring.data.meilisearch.core.convert.MeilisearchConverter;
 import io.vanslog.spring.data.meilisearch.core.mapping.MeilisearchPersistentEntity;
 import io.vanslog.spring.data.meilisearch.core.mapping.MeilisearchPersistentProperty;
 import io.vanslog.spring.data.meilisearch.core.mapping.SimpleMeilisearchMappingContext;
+import io.vanslog.spring.data.meilisearch.core.query.BaseQuery;
+import io.vanslog.spring.data.meilisearch.core.query.IndexQuery;
 import org.springframework.data.mapping.PersistentProperty;
 import org.springframework.lang.Nullable;
 import org.springframework.util.Assert;
 
 import java.lang.reflect.Method;
-import java.util.*;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.Objects;
 
 /**
  * Implementation of {@link io.vanslog.spring.data.meilisearch.core.MeilisearchOperations}.
@@ -48,7 +55,8 @@ public class MeilisearchTemplate implements MeilisearchOperations {
 
 	private final MeilisearchClient meilisearchClient;
 	private final MeilisearchConverter meilisearchConverter;
-	private final ObjectMapper objectMapper;
+	private final RequestConverter requestConverter;
+	private final ResponseConverter responseConverter;
 
 	public MeilisearchTemplate(MeilisearchClient meilisearchClient) {
 		this(meilisearchClient, null);
@@ -59,7 +67,8 @@ public class MeilisearchTemplate implements MeilisearchOperations {
 		this.meilisearchClient = meilisearchClient;
 		this.meilisearchConverter = meilisearchConverter != null ? meilisearchConverter
 				: new MappingMeilisearchConverter(new SimpleMeilisearchMappingContext());
-		this.objectMapper = new ObjectMapper();
+		this.requestConverter = new RequestConverter();
+		this.responseConverter = new ResponseConverter();
 	}
 
 	@Override
@@ -179,23 +188,36 @@ public class MeilisearchTemplate implements MeilisearchOperations {
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public <T> List<T> search(SearchRequest searchRequest, Class<?> clazz) {
+	public int count(SearchRequest searchRequest, Class<?> clazz) {
 		String indexUid = getIndexUidFor(clazz);
-		List<HashMap<String, Object>> hits = execute(client -> client.index(indexUid).search(searchRequest)).getHits();
+		SearchResult searchable = (SearchResult) execute(client -> client.index(indexUid).search(searchRequest));
 
-		return hits.stream() //
-				.map(hit -> (T) objectMapper.convertValue(hit, clazz)) //
-				.toList();
+		return searchable.getEstimatedTotalHits();
 	}
 
-    @SuppressWarnings("unchecked")
-    @Override
-    public int count(SearchRequest searchRequest, Class<?> clazz) {
-        String indexUid = getIndexUidFor(clazz);
-        SearchResult searchable = (SearchResult) execute(client -> client.index(indexUid).search(searchRequest));
+	@Override
+	public <T> SearchHits<T> multiSearch(List<IndexQuery> queries, Class<?> clazz) {
+		String indexUid = getIndexUidFor(clazz);
+		queries.forEach(query -> query.setIndexUid(indexUid));
+		MultiSearchRequest request = requestConverter.searchRequest(queries);
+		Results<MultiSearchResult> results = execute(client -> client.multiSearch(request));
+		return responseConverter.mapResults(results, clazz, this.count(clazz));
+	}
 
-        return searchable.getEstimatedTotalHits();
-    }
+	@Override
+	public <T> List<T> search(SearchRequest searchRequest, Class<?> clazz) {
+		String indexUid = getIndexUidFor(clazz);
+		Searchable result = execute(client -> client.index(indexUid).search(searchRequest));
+		return responseConverter.mapHitList(result, clazz);
+	}
+
+	@Override
+	public <T> SearchHits<T> search(BaseQuery query, Class<?> clazz) {
+		String indexUid = getIndexUidFor(clazz);
+		SearchRequest request = requestConverter.searchRequest(query);
+		Searchable result = execute(client -> client.index(indexUid).search(request));
+		return responseConverter.mapHits(result, clazz, this.count(clazz));
+	}
 
 	public <T> void applySettings(Class<T> clazz) {
 		String indexUid = getIndexUidFor(clazz);

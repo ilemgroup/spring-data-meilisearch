@@ -1,5 +1,5 @@
 /*
- * Copyright 2023-2024 the original author or authors.
+ * Copyright 2023-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,19 +16,16 @@
 package io.vanslog.spring.data.meilisearch.entities;
 
 import io.vanslog.spring.data.meilisearch.annotations.Document;
+import org.springframework.data.annotation.Id;
 
-import io.vanslog.spring.data.meilisearch.annotations.Setting;
 import java.util.Arrays;
 import java.util.Objects;
-
-import org.springframework.data.annotation.Id;
 
 /**
  * Movie entity for tests.
  *
  * @author Junghoon Ban
  */
-@Setting(sortAttributes = { "title" })
 @Document(indexUid = "movies")
 @SuppressWarnings("unused")
 public class Movie {

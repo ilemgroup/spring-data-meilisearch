@@ -1,5 +1,5 @@
 /*
- * Copyright 2023-2024 the original author or authors.
+ * Copyright 2023-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,15 +15,14 @@
  */
 package io.vanslog.spring.data.meilisearch.config;
 
-import static org.assertj.core.api.Assertions.*;
-
+import com.meilisearch.sdk.json.JacksonJsonHandler;
+import com.meilisearch.sdk.json.JsonHandler;
 import io.vanslog.spring.data.meilisearch.annotations.Document;
 import io.vanslog.spring.data.meilisearch.client.ClientConfiguration;
 import io.vanslog.spring.data.meilisearch.client.MeilisearchClient;
 import io.vanslog.spring.data.meilisearch.core.MeilisearchOperations;
 import io.vanslog.spring.data.meilisearch.repository.MeilisearchRepository;
 import io.vanslog.spring.data.meilisearch.repository.config.EnableMeilisearchRepositories;
-
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,8 +31,7 @@ import org.springframework.data.annotation.Id;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-import com.meilisearch.sdk.json.JacksonJsonHandler;
-import com.meilisearch.sdk.json.JsonHandler;
+import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * Annotation based configuration test.
@@ -70,10 +68,11 @@ class MeilisearchConfigurationUnitTests {
 		assertThat(applySettingsFalseRepository).isNotNull();
 	}
 
-	@Document(indexUid = "test-index-config-namespace", applySettings = false)
-	record ApplySettingsFalseEntity(@Id String id) {}
-
 	interface ApplySettingsFalseRepository extends MeilisearchRepository<ApplySettingsFalseEntity, String> {}
+
+    @Document(indexUid = "test-index-config-namespace", applySettings = false)
+    record ApplySettingsFalseEntity(@Id String id) {
+    }
 
 	@Configuration
 	@EnableMeilisearchRepositories(basePackages = { "io.vanslog.spring.data.meilisearch.config" },
@@ -81,10 +80,10 @@ class MeilisearchConfigurationUnitTests {
 	static class CustomConfiguration extends MeilisearchConfiguration {
 		@Override
 		public ClientConfiguration clientConfiguration() {
-			return ClientConfiguration.builder()
-					.connectedToLocalhost()
-					.withApiKey("masterKey")
-					.withRequestTimeout(2000)
+            return ClientConfiguration.builder() //
+                    .connectedToLocalhost() //
+                    .withApiKey("masterKey") //
+                    .withRequestTimeout(2000) //
 					.withRequestInterval(20).build();
 		}
 

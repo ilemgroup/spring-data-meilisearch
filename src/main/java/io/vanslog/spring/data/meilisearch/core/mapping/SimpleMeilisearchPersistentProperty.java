@@ -1,5 +1,5 @@
 /*
- * Copyright 2023-2024 the original author or authors.
+ * Copyright 2023-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,15 +15,15 @@
  */
 package io.vanslog.spring.data.meilisearch.core.mapping;
 
-import java.lang.reflect.Field;
-import java.util.List;
-
 import org.springframework.data.mapping.Association;
 import org.springframework.data.mapping.PersistentEntity;
 import org.springframework.data.mapping.model.AnnotationBasedPersistentProperty;
 import org.springframework.data.mapping.model.Property;
 import org.springframework.data.mapping.model.SimpleTypeHolder;
 import org.springframework.util.Assert;
+
+import java.lang.reflect.Field;
+import java.util.List;
 
 /**
  * Meilisearch specific {@link org.springframework.data.mapping.PersistentEntity} implementation holding.
